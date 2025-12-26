@@ -1,9 +1,11 @@
-from job_pricing.db.clickhouse import get_features_from_clickhouse
-from job_pricing.db.csv_store import get_features_from_csv
+from job_pricing.db.clickhouse import ch_fetch_features_1d
+from job_pricing.db.csv_store import csv_fetch_features_1d
 
-def get_job_features(job_id: int):
-    features = get_features_from_clickhouse(job_id)
-    if features:
-        return features
+FEATURE_STORE_MODE = "auto"
 
-    return get_features_from_csv(job_id)
+def fetch_features_1d(job_id: int):
+    feats, sql, err = ch_fetch_features_1d(job_id)
+    if feats and not err:
+        return feats
+
+    return csv_fetch_features_1d(job_id)
