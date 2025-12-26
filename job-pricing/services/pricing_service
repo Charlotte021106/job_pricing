@@ -1,0 +1,25 @@
+import math
+
+def pricing_by_features(
+    features: dict,
+    brand_level: float = 3.0,
+    top_talent_ratio: float = 0.10,
+    roi_target: float = 3.0,
+    v: float = 100.0,
+) -> float:
+    apply_cnt = float(features.get("apply_1d", 0.0))
+
+    expected_applies = apply_cnt * top_talent_ratio
+    expected_value = v * expected_applies
+    price_base = expected_value / max(float(roi_target), 1e-6)
+
+    z = math.log1p(max(price_base, 0.0))
+    z_min, z_max = 0.0, 6.0
+    z_norm = max(0.0, min(1.0, (z - z_min) / (z_max - z_min)))
+
+    price_core = 250.0 + z_norm * (380.0 - 250.0)
+
+    brand_factor = 1.0 + 0.05 * (float(brand_level) - 3.0)
+    price_label = price_core * brand_factor
+
+    return round(max(120.0, min(650.0, price_label)), 2)
