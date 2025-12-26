@@ -17,7 +17,6 @@ class QuoteReq(BaseModel):
     roi_target: float = 3.0
     v: float = 100.0
 
-
 @router.post("/api/pricing/quote")
 def quote(req: QuoteReq):
     online_price = None
